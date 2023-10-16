@@ -1,3 +1,4 @@
+#Імпортування бібліотек
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lower,col, regexp_replace, explode, split, concat_ws
 
