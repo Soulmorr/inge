@@ -8,7 +8,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Завантаження вхідних даних
-df = spark.read.json("10K.github.jsonl")
+df = spark.read.json("lab1/10K.github.jsonl")
 
 # Фільтрація даних для подій типу "PushEvent"
 filtered_df = df.filter(df.type == "PushEvent")
@@ -18,7 +18,7 @@ transformed_df = filtered_df.select(lower(col("actor.login")).alias("author"),
                                     explode("payload.commits").alias("commits")) \
                             .select("author", lower(regexp_replace(col("commits.message"), "[^a-zA-Z\\s]", "")).alias("message")) \
                             .withColumn("words", split(col("message"), " ")) \
-                            .withColumn("ngrams", concat_ws(" ", col("words"), col("words").getItem(1), col("words").getItem(2))) \
+                            .withColumn("ngrams", concat_ws(" ", col("words"), col("words").getItem(0), col("words").getItem(1),col("words").getItem(2),col("words").getItem(3))) \
                             .select("author", "ngrams") \
                             .limit(5)
 
@@ -31,12 +31,12 @@ for row in results:
     output_dict[row.author].append(row.ngrams)
 
 # Збереження результатів у CSV-файл
-with open('output.csv', 'w') as file:
+with open('lab1/output.csv', 'w') as file:
     for author, ngrams in output_dict.items():
-        file.write(f"(Author: {author}, Commit message: {' '.join(ngrams[0].split(' ')[:3])}) -> {{\n")
+        file.write(f"(Author: {author}, Commit message: {' '.join(ngrams[0].split(' ')[:5])}) -> {{\n")
         for ngram in ngrams:
             ngram_list = ngram.split(' ')
-            file.write(f"{ngram_list[0]}, {ngram_list[0]} {ngram_list[1]} {ngram_list[2]}, {ngram_list[1]} {ngram_list[2]} {ngram_list[3]}\n")
+            file.write(f"{author},{ngram_list[0]} {ngram_list[1]} {ngram_list[2]}, {ngram_list[1]} {ngram_list[2]} {ngram_list[3]}, {ngram_list[2]} {ngram_list[3]} {ngram_list[4]}\n")
         file.write("}\n")
 
 # Зупинити SparkSession
