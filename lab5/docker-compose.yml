@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+    test:
+      image: "lab5"
+      volumes:
+        - .:/lab5
+      command: python3 -m pytest
+    run:
+      image: "lab5"
+      volumes:
+        - .:/lab5
+      command: /spark/bin/spark-submit main.py
