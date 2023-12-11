@@ -1,0 +1,4 @@
+pytest
+duckdb
+pandas
+sqlalchemy

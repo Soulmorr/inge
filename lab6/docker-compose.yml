@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+    test:
+      image: "lab6"
+      volumes:
+        - .:/lab6
+      command: python3 -m pytest
+    run:
+      image: "lab6"
+      volumes:
+        - .:/lab6
+      command: python3 main.py
